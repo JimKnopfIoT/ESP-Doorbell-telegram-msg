@@ -5,10 +5,29 @@
 #include <tr064.h>
 #include <ESP8266TelegramBOT.h>
 #include <PubSubClient.h>
+#include <credentials.h> // we store all static credentials in libraries/credentials/credentials.h
 
-#define mqtt_server "<ip>"
-#define mqtt_user "<user>"
-#define mqtt_password "<password>"
+// Telegram Settings
+// First create a bot with telegram's botfather and write down the bot settings. 
+// Findout your own telegramID (this is the adminID to communicate with the bot).
+// If you create a channel, findout the channelID (chatID).
+
+/*
+// all static credentials are stored in libraries/credentials/credentials.h
+#define botName "<botName>"  // for Bot use
+#define botUserName "<botUserName>" // for Bot use
+#define botToken "<like 123456789:AABBccDDeeFfgGHHiIjjKklLMmnNooPPqQrR" // for Bot use
+//#define adminID "like 12345678" // your ID, use this ID if you want do talk directly to the bot
+#define chatID "like -123456789" // channelID, use this if you want to talk to the bot via channel, (leading "-" needed)
+*/
+
+/*
+// Wifi settings
+// all static credentials are stored in libraries/credentials/credentials.h
+static char ssid[] = "<your-ssid";
+static char password[] = "your-password";
+*/
+static char hostname[] = "<your-hostname-for-ESP"; /////////////////////////////////
 #define klingel_topic "fritzbox/klingel"
 
 extern "C" {
@@ -18,14 +37,18 @@ extern "C" {
 //////////////////////////  MQTT Config  ///////////////////////////////////////////
 //If you have a MQTT-Server set value to 1, otherwise
 #define mqttenabled 1
+/*
+// we store all static credentials in libraries/credentials/credentials.h
 //enter MQTT Server-IP
 IPAddress mqttserver(<ip like 192, 168, 10, 1);
+*/
 
 #if mqttenabled == 1
 WiFiClient espClient;
 PubSubClient client(espClient);
 #endif
- 
+/* 
+// we store all static credentials in libraries/credentials/credentials.h
 //////////////////////////  Fritzbox Config  ///////////////////////////////////////
 //Username of your Fritzbox. If you didn'T change default user, then it's "admin".
 const char* fuser = "<user>";
@@ -33,28 +56,9 @@ const char* fuser = "<user>";
 const char* fpass = "<password>";
 /IP-Address of your Fritzbox. Default is 192.168.178.1.
 const char* IP = "<ip>";
+*/
 const int PORT = 49000;
 TR064 connection(PORT, IP, fuser, fpass);
-
-//////////////////////////  Telegram Config  //////////////////////////////////////////
-
-
-// Telegram Settings
-// First create a bot with telegram's botfather and write down the bot settings. 
-// Findout your own telegramID (this is the adminID to communicate with the bot).
-// If you create a channel, findout the channelID (chatID).
-
-#define botName "<botName>"  // for Bot use
-#define botUserName "<botUserName>" // for Bot use
-#define botToken "<like 123456789:AABBccDDeeFfgGHHiIjjKklLMmnNooPPqQrR" // for Bot use
-//#define adminID "like 12345678" // your ID, use this ID if you want do talk directly to the bot
-#define chatID "like -123456789" // channelID, use this if you want to talk to the bot via channel, (leading "-" needed)
-
-/////////////////////////  Wifi Config  //////////////////////////////////////////
-static char ssid[] = "<your-SSID";
-static char password[] = "your-password";
-static char hostname[] = "<your-hostname-for-ESP"; /////////////////////////////////
-
 int state = 0;
 
 TelegramBOT bot(botToken, botName, botUserName);
@@ -76,8 +80,8 @@ void setup()
      
      //Serial.println(""); Serial.print("Reason for startup :");Serial.println(ESP.getResetReason());
      wifi_station_set_hostname(hostname);
-     WiFi.begin(SSID, password);
-     Serial.print("\n  Connecting to " + String(SSID) + " ");
+     WiFi.begin(ssid, password);
+     Serial.print("\n  Connecting to " + String(ssid) + " ");
      int _try = 0;
      // Wait until it is connected to the network
      while (WiFi.status() != WL_CONNECTED) 
